@@ -1,0 +1,9 @@
+services:
+
+  transfer:
+    image: 'transfermoney'
+    ports:
+      - '5500:5500'
+
+    build:
+      context: .

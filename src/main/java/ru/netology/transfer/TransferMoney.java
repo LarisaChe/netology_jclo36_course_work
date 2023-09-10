@@ -1,7 +1,6 @@
 package ru.netology.transfer;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import jakarta.validation.Valid;
 import jakarta.validation.constraints.*;
 import ru.netology.exception.ErrorVerificationCode;
 
@@ -16,6 +15,7 @@ public class TransferMoney {
     @NotBlank
     @Size(min = 16, max = 20)
     private String cardFromNumber;
+
     @NotBlank
     @Size(min = 5)
     private String cardFromValidTill;
@@ -23,15 +23,14 @@ public class TransferMoney {
     @NotBlank
     @Size(min = 3)
     private String cardFromCVV;
+
     @NotBlank
     @Size(min = 16, max = 20)
     private String cardToNumber;
+
     @JsonProperty("amount")
     private Amount amount;
-   /* @Min(1)
-    private int amountValue;
-    @JsonProperty(value = "currency")
-    private Currency amountCurrency;*/
+
     private String operationId;
     private String verificationCode;
     private Status status;
@@ -64,19 +63,22 @@ public class TransferMoney {
         this.operationId = operationId;
     }
 
+    public void setVerificationCode(String verificationCode) {
+        this.verificationCode = verificationCode;
+    }
+
     public String getVerificationCode() {
         return verificationCode;
     }
 
     public void generateVerificationCode() throws ErrorVerificationCode {
         if (verificationCode == null || verificationCode == "") {
-            verificationCode = genNumberString();
+            verificationCode = generateNumberString();
             status = Status.VERIFIED;
-        }
-        else throw new ErrorVerificationCode("Verification Code is already existed");
+        } else throw new ErrorVerificationCode("Verification Code is already existed");
     }
 
-    private String genNumberString() {
+    private String generateNumberString() {
         StringBuilder vc = new StringBuilder();
         Random random = new Random();
         for (int i = 1; i <= lenVerificationCode; i++) {
@@ -119,14 +121,5 @@ public class TransferMoney {
                 ", status=" + status +
                 '}';
     }
-
-    /*public boolean isEmpty() {
-        return (this.cardFromNumber != null &&
-                this.cardFromValidTill != null &&
-                this.cardFromCVV != null &&
-                this.cardToNumber != null &&
-                this.amountValue < 1 &&
-                this.amountCurrency != null);
-    }*/
 }
 

@@ -2,7 +2,7 @@ package ru.netology.repository;
 
 import org.springframework.stereotype.Repository;
 import ru.netology.exception.ErrorOperationId;
-import ru.netology.exception.ErrorVerificationCode;
+import ru.netology.exception.ErrorTransfer;
 import ru.netology.log.Log;
 import ru.netology.transfer.Status;
 import ru.netology.transfer.TransferMoney;
@@ -22,42 +22,32 @@ public class TransferMoneyRepository {
 
     private static ConcurrentHashMap<String, TransferMoney> operationsTransferMoney = new ConcurrentHashMap<>();
 
-    public String addOperation(TransferMoney transferMoney) throws ErrorOperationId, IOException {
+    public String addOperation(TransferMoney transferMoney) throws IOException {
         num.incrementAndGet();
         String operationId = num.toString();
-        if (!operationsTransferMoney.containsKey(operationId)) {
-            transferMoney.setOperationId(operationId);
-            transferMoney.setStatus(Status.CREATED);
-            operationsTransferMoney.put(operationId, transferMoney);
+
+        transferMoney.setOperationId(operationId);
+        transferMoney.setStatus(Status.CREATED);
+
+        if (operationsTransferMoney.containsKey(operationId)) {
+            log.logError(String.format("Перевод %s не был создан ", operationId));
+            throw new ErrorTransfer("Error creating transfer", 0);
         }
-        else {
-            log.logError("Уже существует перевод с номером " + operationId);
-            throw new ErrorOperationId("Error operation ID");
-        }
-        log.logInfo(String.format("Перевод зарегистирован под номером %s. Статус перевода: %s", operationId, transferMoney.getStatus()));
+        operationsTransferMoney.put(operationId, transferMoney);
+        log.logInfo(String.format("Перевод зарегистрирован под номером %s. Статус перевода: %s", operationId, transferMoney.getStatus()));
         return operationId;
     }
 
-    public TransferMoney getOperation(String operationId) {
-        return operationsTransferMoney.getOrDefault(operationId, null);
-    }
-
-    public String verifyOperation(String operationId) throws ErrorOperationId, ErrorVerificationCode, IOException {
+    public String saveVerificationCode(String operationId, String verificationCode) throws IOException, ErrorOperationId {
         if (operationsTransferMoney.containsKey(operationId)) {
-            System.out.println("найдена: " + operationId);
             log.logInfo("Найден перевод с номером " + operationId);
-        }
-        TransferMoney transferMoney = operationsTransferMoney.getOrDefault(operationId, null);
-        printOperations();
-        System.out.println(operationId + " -1- " + transferMoney);
-        if (transferMoney != null) {
-            transferMoney.generateVerificationCode();
-            System.out.println(" -2- " + transferMoney);
+            TransferMoney transferMoney = operationsTransferMoney.get(operationId);
+            transferMoney.setVerificationCode(verificationCode);
+            transferMoney.setStatus(Status.VERIFIED);
             operationsTransferMoney.put(operationId, transferMoney);
             log.logInfo(String.format("Перевод %s подтвержден. Код верификации: %s. Статус перевода: %s", operationId, transferMoney.getVerificationCode(), transferMoney.getStatus()));
-            return transferMoney.getVerificationCode();
-        }
-        else {
+            return transferMoney.getOperationId();
+        } else {
             log.logError("Не найден перевод с номером " + operationId);
             throw new ErrorOperationId("Error operation ID");
         }
@@ -70,5 +60,9 @@ public class TransferMoneyRepository {
 
     public ConcurrentHashMap<String, TransferMoney> getOperations() {
         return operationsTransferMoney;
+    }
+
+    public int countOperations() {
+        return operationsTransferMoney.size();
     }
 }

@@ -1,4 +1,4 @@
-package ru.netology;
+package ru.netology.log;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -24,7 +24,8 @@ public class LogTest {
         log.log("ТEST","Проверка записи в transfer.log");
 
         String gotStr = getStringFromLog();
-        Assertions.assertTrue(gotStr.equals(testStr));
+        //Assertions.assertTrue(gotStr.equals(testStr));
+        Assertions.assertEquals(testStr, gotStr);
     }
 
     @Test
@@ -33,7 +34,7 @@ public class LogTest {
         String testStr = "INFO: Информационная запись";
 
         String gotStr = getStringFromLog();
-        Assertions.assertTrue(gotStr.equals(testStr));
+        Assertions.assertEquals(testStr, gotStr);
     }
 
     @Test
@@ -42,6 +43,7 @@ public class LogTest {
         String testStr = "ERROR: Информация об ошибке";
 
         String gotStr = getStringFromLog();
-        Assertions.assertTrue(gotStr.equals(testStr));
+        //Assertions.assertTrue(gotStr.equals(testStr));
+        Assertions.assertEquals(testStr, gotStr);
     }
 }

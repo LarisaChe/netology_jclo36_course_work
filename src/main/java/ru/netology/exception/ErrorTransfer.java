@@ -1,7 +1,13 @@
 package ru.netology.exception;
 
 public class ErrorTransfer extends RuntimeException {
-    public ErrorTransfer(String msg) {
+    private int id;
+    public ErrorTransfer(String msg, int id) {
         super(msg);
+        this.id = id;
+    }
+
+    public int getId() {
+        return id;
     }
 }

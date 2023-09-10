@@ -1,6 +1,7 @@
 package ru.netology.log;
 
 import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -10,7 +11,7 @@ public class WorkWithFiles {
         List<String> result = new ArrayList<>();
         if (file.exists()) {
             try {
-                FileReader fr = new FileReader(file);
+                FileReader fr = new FileReader(file, StandardCharsets.UTF_8);
                 BufferedReader reader = new BufferedReader(fr);
                 String line = reader.readLine();
 
@@ -28,7 +29,7 @@ public class WorkWithFiles {
     }
 
     public static void saveToFile(String fn, String str, boolean append) throws IOException {
-        try (FileWriter writer = new FileWriter(fn, append)) {
+        try (FileWriter writer = new FileWriter(fn, StandardCharsets.UTF_8, append)) {
             writer.write(str);
             writer.append('\n');
             writer.flush();

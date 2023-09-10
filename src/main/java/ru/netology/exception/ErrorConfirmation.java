@@ -1,12 +1,12 @@
 package ru.netology.exception;
 
 public class ErrorConfirmation extends RuntimeException {
-    private String operationId;
-    public ErrorConfirmation(String msg, String operationId) {
+    private int id;
+    public ErrorConfirmation(String msg, int id) {
         super(msg);
-        this.operationId = operationId;
+        this.id = id;
     }
-    public String getOperationId() {
-        return operationId;
+    public int getOperationId() {
+        return id;
     }
 }

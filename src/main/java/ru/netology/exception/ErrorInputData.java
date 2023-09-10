@@ -1,13 +1,13 @@
 package ru.netology.exception;
 
 public class ErrorInputData extends RuntimeException {
-    private String operationId;
-    public ErrorInputData(String msg, String operationId) {
+    private int id;
+    public ErrorInputData(String msg, int id) {
         super(msg);
-        this.operationId = operationId;
+        this.id = id;
     }
 
-    public String getOperationId() {
-        return operationId;
+    public int getId() {
+        return id;
     }
 }

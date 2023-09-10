@@ -10,7 +10,6 @@ public class ExceptionHandlerAdvice {
 
     @ExceptionHandler(ErrorInputData.class)
     public ResponseEntity<ErrorInputData> eidHandler(ErrorInputData e) {
-        //System.out.println(e.getMessage());
         return new ResponseEntity<ErrorInputData>(e, HttpStatus.BAD_REQUEST);
     }
 

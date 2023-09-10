@@ -8,7 +8,7 @@ public enum Currency {
     CNY("Китайский юань");
     private String currency;
 
-    Currency (String currency) {
+    Currency(String currency) {
         this.currency = currency;
     }
 
