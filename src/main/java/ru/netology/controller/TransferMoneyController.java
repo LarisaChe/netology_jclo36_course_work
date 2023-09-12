@@ -8,8 +8,6 @@ import ru.netology.transfer.Code;
 import ru.netology.transfer.TransferMoney;
 
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 @CrossOrigin//(origins = "https://serp-ya.github.io/card-transfer/", maxAge = 3600)
@@ -22,19 +20,17 @@ public class TransferMoneyController {
     }
 
     @PostMapping("/transfer")
-    public Map<String, String> transfer(@RequestBody @Validated TransferMoney transferMoney) throws ErrorOperationId, IOException {
-        String operationId = service.createOperation(transferMoney);
-        Map<String, String> response = new HashMap<>();
-        response.put("operationId", operationId);
+    @ResponseBody
+    public ResponseTransfer transfer(@RequestBody @Validated TransferMoney transferMoney) throws ErrorOperationId, IOException {
+        ResponseTransfer response = new ResponseTransfer(service.createOperation(transferMoney));
         return response;
     }
 
     @PostMapping("/confirmOperation")
-    public Map<String, String> confirmOperation(@RequestBody Code code) throws IOException {
+    @ResponseBody
+    public ResponseTransfer confirmOperation(@RequestBody Code code) throws IOException {
         //System.out.println(code.toString());
-        String operationId = service.confirm(code.getOperationId(), code.getCode());
-        Map<String, String> response = new HashMap<>();
-        response.put("operationId", operationId);
+        ResponseTransfer response = new ResponseTransfer(service.confirm(code.getOperationId(), code.getCode()));
         return response;
     }
 
