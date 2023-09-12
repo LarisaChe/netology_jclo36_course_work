@@ -1,35 +1,41 @@
 package ru.netology.controller;
 
-import netscape.javascript.JSObject;
-import org.springframework.http.MediaType;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.netology.exception.ErrorOperationId;
-import ru.netology.exception.ErrorVerificationCode;
 import ru.netology.service.TransferMoneyService;
 import ru.netology.transfer.Code;
 import ru.netology.transfer.TransferMoney;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+
 @CrossOrigin//(origins = "https://serp-ya.github.io/card-transfer/", maxAge = 3600)
 @RestController
 public class TransferMoneyController {
-    private TransferMoneyService service;
+    private final TransferMoneyService service;
 
     public TransferMoneyController(TransferMoneyService service) {
         this.service = service;
     }
 
     @PostMapping("/transfer")
-    public String transfer(@RequestBody @Validated TransferMoney transferMoney) throws ErrorOperationId, IOException {
-        return service.createOperation(transferMoney);
+    public Map<String, String> transfer(@RequestBody @Validated TransferMoney transferMoney) throws ErrorOperationId, IOException {
+        String operationId = service.createOperation(transferMoney);
+        Map<String, String> response = new HashMap<>();
+        response.put("operationId", operationId);
+        return response;
     }
 
     @PostMapping("/confirmOperation")
-    public String confirmOperation(@RequestBody Code code) throws ErrorOperationId, IOException {
-        return service.confirm(code.getCode());
+    public Map<String, String> confirmOperation(@RequestBody Code code) throws IOException {
+        //System.out.println(code.toString());
+        String operationId = service.confirm(code.getOperationId(), code.getCode());
+        Map<String, String> response = new HashMap<>();
+        response.put("operationId", operationId);
+        return response;
     }
 
     @CrossOrigin("http://localhost")

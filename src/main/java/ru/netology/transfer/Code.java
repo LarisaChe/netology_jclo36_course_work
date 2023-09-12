@@ -1,23 +1,33 @@
 package ru.netology.transfer;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import jakarta.validation.constraints.NotNull;
 
 public class Code {
-    @NotNull
-    @JsonProperty("code")
-    private String code;
 
-    public Code(String code) {
+    @JsonProperty("code")
+    private  String code;
+
+    @JsonProperty("operationId")
+    private  String operationId;
+
+    public Code(String code, String operationId) {
         this.code = code;
+        this.operationId = operationId;
     }
-    public Code() {}
 
     public String getCode() {
         return code;
     }
 
-    public void setCode(String code) {
-        this.code = code;
+    public String getOperationId() {
+        return operationId;
+    }
+
+    @Override
+    public String toString() {
+        return "Code{" +
+                "code='" + code + '\'' +
+                ", operationId='" + operationId + '\'' +
+                '}';
     }
 }

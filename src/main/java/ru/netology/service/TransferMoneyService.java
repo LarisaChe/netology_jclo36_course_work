@@ -1,11 +1,8 @@
 package ru.netology.service;
 
-import lombok.Getter;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.netology.exception.ErrorConfirmation;
 import ru.netology.exception.ErrorInputData;
-import ru.netology.exception.ErrorOperationId;
 import ru.netology.log.Log;
 import ru.netology.repository.TransferMoneyRepository;
 import ru.netology.transfer.TransferMoney;
@@ -18,17 +15,10 @@ public class TransferMoneyService {
 
     Log log = Log.getInstance();
 
-    private TransferMoneyRepository transferMoneyRepository;
+    private final TransferMoneyRepository transferMoneyRepository;
 
     public TransferMoneyService(TransferMoneyRepository transferMoneyRepository) {
         this.transferMoneyRepository = transferMoneyRepository;
-    }
-
-    @Getter
-    private String currentOperationId;
-
-    public void setCurrentOperationId(String currentOperationId) {
-        this.currentOperationId = currentOperationId;
     }
 
     public String createOperation(TransferMoney transferMoney) throws IOException {
@@ -43,20 +33,19 @@ public class TransferMoneyService {
                     transferMoney.getCardToNumber(),
                     transferMoney.getAmount().getValue(),
                     transferMoney.getAmount().getCurrency()));
-            setCurrentOperationId(transferMoneyRepository.addOperation(transferMoney));
-            return currentOperationId;
+            return transferMoneyRepository.addOperation(transferMoney);
         }
     }
 
-    public String confirm(String code) throws ErrorOperationId, IOException {
-        log.logInfo("Запрос на подтверждение перевода " + (currentOperationId == null ? "<номер неизвестен>" : currentOperationId));
+    public String confirm(String operationId, String code) throws IOException {
+        log.logInfo("Запрос на подтверждение перевода " + (operationId == null ? "<номер неизвестен>" : operationId));
 
-        if (code == null || code.isEmpty() || currentOperationId == null) {
+        if (code == null || code.isEmpty() || operationId == null) {
             log.logError("Некорректный код верификации или номер перевода.");
-            throw new ErrorConfirmation("Error confirmation", currentOperationId == null ? 0 : Integer.parseInt(currentOperationId));
+            throw new ErrorConfirmation("Error confirmation", operationId == null ? 0 : Integer.parseInt(operationId));
         } else {
-            transferMoneyRepository.saveVerificationCode(currentOperationId, code);
-            return currentOperationId;
+            transferMoneyRepository.saveVerificationCode(operationId, code);
+            return operationId;
         }
     }
 
@@ -73,7 +62,4 @@ public class TransferMoneyService {
                 transferMoney.getAmount().getCurrency() == null);
     }
 
-    public int countOperations() {
-        return transferMoneyRepository.countOperations();
-    }
 }

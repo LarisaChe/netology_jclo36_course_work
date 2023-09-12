@@ -96,7 +96,8 @@ POST http://localhost:5500/transfer
 POST http://localhost:5500/confirmOperation
 
 {
-    "code": "1234"
+    "operationId": "1",
+    "code": "7654"
 }
 
 3) дополнительно для тестирования была реализована обработка GET запроса для получения списка переводов

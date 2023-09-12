@@ -8,6 +8,7 @@ import ru.netology.exception.ErrorConfirmation;
 import ru.netology.exception.ErrorInputData;
 import ru.netology.repository.TransferMoneyRepository;
 import ru.netology.service.TransferMoneyService;
+import ru.netology.transfer.Amount;
 import ru.netology.transfer.Code;
 import ru.netology.transfer.TransferMoney;
 
@@ -20,14 +21,14 @@ public class TransferMoneyControllerTest {
     @Test
     public void test01_createOperation() {
         Assertions.assertThrows(ErrorInputData.class, () -> {
-            controller.transfer(new TransferMoney());
+            controller.transfer(new TransferMoney(null, null, null, null, new Amount(0, null)));
         });
     }
 
     @Test
     public void test02_confirm_throwsException() {
         Assertions.assertThrows(ErrorConfirmation.class, () -> {
-            controller.confirmOperation(new Code("1313"));
+            controller.confirmOperation(new Code("1313", "123455677"));
         });
     }
 

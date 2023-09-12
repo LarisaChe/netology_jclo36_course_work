@@ -8,36 +8,26 @@ public class Amount {
 
     @NotNull
     @JsonProperty("currency")
-    private Currency currency;
+    private final Currency currency;
 
     @NotNull
     @JsonProperty("value")
     @Min(1)
-    private int value;
+    private final int value;
 
     public Amount(int value, Currency currency) {
         this.value = value;
         this.currency = currency;
     }
 
-    public Amount() {
-    }
-
     public int getValue() {
         return value;
-    }
-
-    public void setValue(int value) {
-        this.value = value;
     }
 
     public Currency getCurrency() {
         return currency;
     }
 
-    public void setCurrency(Currency currency) {
-        this.currency = currency;
-    }
 
     @Override
     public String toString() {

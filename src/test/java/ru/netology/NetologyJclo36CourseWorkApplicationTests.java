@@ -3,7 +3,6 @@ package ru.netology;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.json.JSONException;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -33,47 +32,47 @@ class NetologyJclo36CourseWorkApplicationTests {
     private static final GenericContainer<?> tmApp = new GenericContainer<>("transfermoney:latest")
             .withExposedPorts(5500);
 
-    private  HttpHeaders headers = new HttpHeaders();
+    private final HttpHeaders headers = new HttpHeaders();
     private static final ObjectMapper objectMapper = new ObjectMapper();
 
     private static final String transferUrl = "http://localhost:5500/transfer";
     private static final String confirmUrl = "http://localhost:5500/confirmOperation";
 
-    private TransferMoney transfer = new TransferMoney(
+    private final TransferMoney transfer = new TransferMoney(
             "1234432156788765",
             "02/28",
             "555",
             "9876678954322345",
             new Amount(1300, Currency.RUB));
 
-    private Code code = new Code("9876");
+    private final Code code = new Code("9876", "1");
 
     @Test
-    public void test01() throws JsonProcessingException, JSONException {
+    public void test01() throws JsonProcessingException {
         headers.setContentType(MediaType.APPLICATION_JSON);
 
         HttpEntity<String> request =
-                new HttpEntity<String>(objectMapper.writeValueAsString(transfer), headers);
+                new HttpEntity<>(objectMapper.writeValueAsString(transfer), headers);
 
         ResponseEntity<String> responseEntityStr = testRestTemplate.
                 postForEntity(transferUrl, request, String.class);
         JsonNode root = objectMapper.readTree(responseEntityStr.getBody());
 
-        Assertions.assertEquals("1", root.toString());
+        Assertions.assertEquals("{\"operationId\":\"1\"}", root.toString());
     }
 
     @Test
-    public void test02() throws JsonProcessingException, JSONException {
+    public void test02() throws JsonProcessingException {
         headers.setContentType(MediaType.APPLICATION_JSON);
 
         HttpEntity<String> request =
-                new HttpEntity<String>(objectMapper.writeValueAsString(code), headers);
+                new HttpEntity<>(objectMapper.writeValueAsString(code), headers);
 
         ResponseEntity<String> responseEntityStr = testRestTemplate.
                 postForEntity(confirmUrl, request, String.class);
         JsonNode root = objectMapper.readTree(responseEntityStr.getBody());
 
-        Assertions.assertEquals("1", root.toString());
+        Assertions.assertEquals("{\"operationId\":\"1\"}", root.toString());
     }
 
 }

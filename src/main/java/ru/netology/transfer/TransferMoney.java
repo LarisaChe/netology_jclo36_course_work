@@ -14,19 +14,19 @@ public class TransferMoney {
 
     @NotBlank
     @Size(min = 16, max = 20)
-    private String cardFromNumber;
+    private final String cardFromNumber;
 
     @NotBlank
     @Size(min = 5)
-    private String cardFromValidTill;
+    private final String cardFromValidTill;
 
     @NotBlank
     @Size(min = 3)
-    private String cardFromCVV;
+    private final String cardFromCVV;
 
     @NotBlank
     @Size(min = 16, max = 20)
-    private String cardToNumber;
+    private final String cardToNumber;
 
     @JsonProperty("amount")
     private Amount amount;
@@ -34,9 +34,6 @@ public class TransferMoney {
     private String operationId;
     private String verificationCode;
     private Status status;
-
-    public TransferMoney() {
-    }
 
     public TransferMoney(String cardFromNumber, String cardFromValidTill, String cardFromCVV, String cardToNumber, Amount amount) {
         this.cardFromNumber = cardFromNumber;

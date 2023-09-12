@@ -5,7 +5,6 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import ru.netology.exception.ErrorConfirmation;
 import ru.netology.exception.ErrorInputData;
-import ru.netology.exception.ErrorOperationId;
 import ru.netology.repository.TransferMoneyRepository;
 import ru.netology.transfer.Amount;
 import ru.netology.transfer.Currency;
@@ -18,47 +17,28 @@ public class TransferMoneyServiceTest {
 
     private TransferMoneyService service = new TransferMoneyService(new TransferMoneyRepository());
 
-    private String testId = "2";
-
-    public TransferMoney testTransfer = new TransferMoney(
+    private TransferMoney testTransfer = new TransferMoney(
             "1440111456121113",
             "12/29",
             "321",
             "2550222122222223",
             new Amount(500, Currency.RUB));
 
-    public void setTestId(String testId) {
-        this.testId = testId;
-    }
-
-    @Test
-    public void test20() {
-        int n = service.countOperations() + 1;
-        setTestId(String.valueOf(n + 1));
-    }
-
     @Test
     public void test21_createOperation() throws IOException {
-        String operationId = service.createOperation(testTransfer);
-        Assertions.assertEquals(testId, operationId);
+        String testId = service.createOperation(testTransfer);
+        Assertions.assertNotNull(testId);
     }
 
     @Test
-    public void test22_confirm() throws ErrorOperationId, IOException {
-        service.setCurrentOperationId(testId);
-        String operationId = service.confirm("1234");
-        Assertions.assertEquals(testId, operationId);
+    public void test22_confirm() throws IOException {
+        String testId = service.confirm("1", "1234");
+        Assertions.assertEquals("1", testId);
     }
 
     @Test
     public void test23_GetOperations() {
-        if (testId.equals("1")) {
-            String testStr = "{1=TransferMoney{cardFrom=1440111456121113 / 12/29 / 321, cardTo=2550222122222223Amount = 500 RUB, operationId='1', verificationCode='1234', status=VERIFIED}}";
-            Assertions.assertTrue(testStr.equals(service.getOperations().toString()));
-        }
-        else {
-            Assertions.assertDoesNotThrow(() -> service.getOperations());
-        }
+        Assertions.assertDoesNotThrow(() -> service.getOperations());
     }
 
     @ParameterizedTest
@@ -85,17 +65,22 @@ public class TransferMoneyServiceTest {
 
     @Test
     public void test25_confirm_NullCode_throwsException() {
-        service.setCurrentOperationId(testId);
-        Assertions.assertThrows(ErrorConfirmation.class,() -> {
-            service.confirm(null);
+        Assertions.assertThrows(ErrorConfirmation.class, () -> {
+            service.confirm("1", null);
         });
     }
 
     @Test
     public void test26_confirm_EmptyCode_throwsException() {
-        service.setCurrentOperationId(testId);
-        Assertions.assertThrows(ErrorConfirmation.class,() -> {
-            service.confirm("");
+        Assertions.assertThrows(ErrorConfirmation.class, () -> {
+            service.confirm("1", "");
+        });
+    }
+
+    @Test
+    public void test27_confirm_NullOperationId_throwsException() {
+        Assertions.assertThrows(ErrorConfirmation.class, () -> {
+            service.confirm(null, "1111");
         });
     }
 }

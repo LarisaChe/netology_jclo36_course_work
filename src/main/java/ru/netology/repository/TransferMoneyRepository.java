@@ -1,7 +1,7 @@
 package ru.netology.repository;
 
 import org.springframework.stereotype.Repository;
-import ru.netology.exception.ErrorOperationId;
+import ru.netology.exception.ErrorConfirmation;
 import ru.netology.exception.ErrorTransfer;
 import ru.netology.log.Log;
 import ru.netology.transfer.Status;
@@ -38,7 +38,7 @@ public class TransferMoneyRepository {
         return operationId;
     }
 
-    public String saveVerificationCode(String operationId, String verificationCode) throws IOException, ErrorOperationId {
+    public String saveVerificationCode(String operationId, String verificationCode) throws IOException {
         if (operationsTransferMoney.containsKey(operationId)) {
             log.logInfo("Найден перевод с номером " + operationId);
             TransferMoney transferMoney = operationsTransferMoney.get(operationId);
@@ -49,7 +49,7 @@ public class TransferMoneyRepository {
             return transferMoney.getOperationId();
         } else {
             log.logError("Не найден перевод с номером " + operationId);
-            throw new ErrorOperationId("Error operation ID");
+            throw new ErrorConfirmation("Error operation ID: "+ operationId, Integer.parseInt(operationId));
         }
     }
 
@@ -62,7 +62,4 @@ public class TransferMoneyRepository {
         return operationsTransferMoney;
     }
 
-    public int countOperations() {
-        return operationsTransferMoney.size();
-    }
 }
